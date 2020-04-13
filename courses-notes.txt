@@ -1,0 +1,137 @@
+Nest JS
+
+Nest JS Architecture consists on the basics of Module Base:
+The structure of each module consists on: 
+- Modules : 
+  Are an effective way to organize components by a closely relate set of capabilities.
+  Modules are singleton , therefore modules can be imported by multiple other modules.
+
+  A module is defined by using the class Decorator @Module  that uses metadata to organize project architecture.
+  Module Properties:
+    Providers
+    Controllers
+    export
+  *Try module as a isolated way
+
+  Create a module via command line
+  nest g module moduleName
+
+
+- Controller:
+  Responsible for handling incoming requests and returning responses to client.
+  Containst the request methods: GET, POST, PUT, DELETE.
+  Controller are defined via the @Controller class decorator
+
+  Create a controller via command line
+  nest g module moduleName --no-spec
+
+- Services/ Providers:
+  Can be injected into constructors if decorated as in @Injectable, via dependency injection
+  Can be a plain value, a class, sync/async factory, etc...
+  The main source of business logic.
+
+
+  Dependency Injection
+
+- DTO (Data Transfer Objects)
+- Entities
+- Data Modelig
+
+Initialize the connection on the Application Module
+
+
+TypeORM is a DB ORM that have the utilities of manage the DB at application Level
+Requires a configuration file, a repository and entities of the module
+
+Entities: have the structure of the DB Table/Objects
+repository: Are Responsible to make the calls and queries to the DB and can be called on the services.
+TypeORM Architecture
+config
+  - typeorm-config.ts
+module
+  -module-entity.ts
+  -module.repository.ts
+
+
+Add the configuration object to the config file
+
+export const typeOrmConfig: TypeOrmModuleOptions = {
+  type: '',
+  host: '',
+  port: int,
+  username: '',
+  password: '',
+  database: '',
+  entities: [__dirname + '/../**/*.entity.{js,ts}'],
+  synchronize: true, // Is recommended to be false
+};
+
+
+when configuration is done import the configuration on the App Module
+@Module({
+  imports: [TasksModule, TypeOrmModule.forRoot(typeOrmConfig)],
+});
+
+This configuration now is on all the Project, Now can be imported on the Module 
+
+First create the Entities for the DB: First use the Entity decorator to initialize the Entity Class, then extend it to the Base entity, thes 
+methods are found on the @nestjs/typeorm;
+
+@Entity()
+export class Task extends BaseEntity {
+
+}
+
+Then you can call this entitis on the Repository file and add Custom methods
+@EntityRepository(Task)
+export class TaskRepository extends Repository<Task> {}
+
+In order to use the Repository have to be called on the Module File
+@Module({
+  imports: [TypeOrmModule.forFeature([TaskRepository])],
+});
+
+
+
+JWT
+Install packages @nestjs/passport, @nestjs/jwt, passport, passport-jwt
+On the module import the JwtModule and the Passport Module
+
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
+
+Then on the module imports setup the passport Estrategy to 'jwt', and  register the JWTModule with expiration and secret
+
+JwtModule.register({
+  secret: 'topSecret123',
+  signOptions: {
+    expiresIn: 3600,
+  },
+}),
+
+
+Use the JWTService in order to signin and create the token or to validate token
+
+Define Strategy
+Create a file in order to create the logic
+
+
+Types of Log
+
+Log: General purpose of logging important Information
+Warning: Unhandled issue that is NOT fatal or destructive
+Error: Unhandled issue that is fatal or destructive
+Debug
+Verbose 
+
+
+Testing
+In order to watch the test while changing use the --watch parameter
+
+describe function is the description of the test
+First parameter: string with the description of the test
+Second parameter: function body with the test
+
+it function have the logic of the tests
+First parameter: have return type of the test
+Second parameter: what the test expects of the function
